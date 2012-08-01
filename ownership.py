@@ -1,5 +1,6 @@
 import os
 import grp
+import logging
 import pwd
 import subprocess
 from tempfile import TemporaryFile
@@ -24,7 +25,8 @@ def create_map(location='/vol/www/'):
     #get a list of the contents of location... which will just be directories
     dirs = os.listdir(location)
 
-    #print 'len(dirs): '+str(len(dirs)) #debug
+    logging.debug('len(dirs): %d', len(dirs))
+
     for _dir in dirs:
         dir_dict[_dir] = {}
 
@@ -37,7 +39,7 @@ def create_map(location='/vol/www/'):
             #print 'dir: ' + _dir  + ', groupname: ' + groupname #debug
         except Exception, err:
             groupname = ''
-            #print 'couldn\'t stat ' + str(os.path.join(location, _dir))
+            logging.debug("couldn't stat: %s", os.path.join(location, _dir))
 
         found_groupname = False
 
@@ -55,7 +57,7 @@ def create_map(location='/vol/www/'):
                 dir_contents = os.listdir(os.path.join(location,_dir))
             except Exception, err:
                 dir_contents = []
-                #print 'couldn\'t open ' + str(os.path.join(location, _dir)) + '\n' + str(err)
+                logging.debug("couldn't open: %s\n\t%s", os.path.join(location, _dir), str(err))
 
             owners = {}
             #for each of the items inside the directory
@@ -69,8 +71,7 @@ def create_map(location='/vol/www/'):
                     else:
                         owners[grp.getgrgid(gid_number)[0]] = 1
                 except Exception, err:
-                    #print 'couldn\'t stat ' + str(os.path.join(os.path.join(location, _dir), subdir))
-                    pass
+                    logging.debug("couldn't stat: %s", os.path.join(location, _dir, subdir))
 
             winner_number = 0
             winner_owner = ''
@@ -86,6 +87,6 @@ def create_map(location='/vol/www/'):
         if dir_dict[key] == '':
             deleted_keys.append(key)
             del(dir_dict[key])
-    #print 'deleted keys: ' + str(deleted_keys)
+    logging.debug('deleted keys: ', str(deleted_keys))
 
     return dir_dict
