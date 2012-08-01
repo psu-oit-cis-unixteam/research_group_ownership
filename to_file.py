@@ -26,7 +26,6 @@ def make_file(filename):
     #if the file doesn't already exist (or has just been erased), then
     #we will create a new one.
     else:
-        #with open(filename, 'w') as fd: #doesn't work with py 2.4
         fd = open(filename, 'w') #works with py 2.4
 
         share_map = create_map('/vol/share') #don't have sufficient privs for this
@@ -43,7 +42,6 @@ def make_file(filename):
             master_map[key] = share_map[key]
 
         for f in master_map.keys():
-            #fd.write('{0} , {1}\n'.format(f, master_map[f])) #doesn't work with py 2.4
             fd.write(f + ' , ' + master_map[f] + '\n')
 
         fd.close() #works with py 2.4
